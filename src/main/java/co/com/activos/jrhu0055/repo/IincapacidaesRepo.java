@@ -1,9 +1,12 @@
 package co.com.activos.jrhu0055.repo;
 
 import co.com.activos.jrhu0055.DTO.ContratoDTO;
+import co.com.activos.jrhu0055.DTO.RadicadoDTO;
 import co.com.activos.jrhu0055.Services.IincapacidadService;
 import co.com.activos.jrhu0055.model.*;
 import co.com.activos.jrhu0055.utiliti.Conexion;
+import co.com.activos.jrhu0055.utiliti.RespuestaGenerica;
+import co.com.activos.jrhu0055.utiliti.TipoRespuesta;
 import oracle.jdbc.OracleTypes;
 
 import java.sql.CallableStatement;
@@ -132,7 +135,11 @@ public class IincapacidaesRepo implements IincapacidadService {
                         contrato.setNumeroContrato(resultSet.getInt("CTO_NUMERO"));
                         contrato.setFechaRetiro(resultSet.getString("CTO_FECRET"));
                         contrato.setFechaFinalizacionContrato(resultSet.getString("CTO_FECTERM"));
+                        contrato.setTipoDocumentoEmppresaFilial(resultSet.getString("TDC_TD_FIL"));
+                        contrato.setGetNumeroDocumentoEmpresaFilial(resultSet.getString("EMP_ND_FIL"));
                         contrato.setNombreEmpresaFilial(resultSet.getString("NOMBRE_EMPRESA_USUARIA"));
+                        contrato.setTipoDocumentoEmpresaPrincipal(resultSet.getString("TDC_TD"));
+                        contrato.setNumeroDocumentoEmpresaPrincipal(resultSet.getString("EMP_ND"));
                         contrato.setNombreEmpresaPrincipal(resultSet.getString("NOMBRE_EMPRESA_PRINCIPAL"));
                         contrato.setEstadoDelContrato(resultSet.getString("ESTADO_CONTRATO"));
                         contratos.add(contrato);
@@ -179,60 +186,6 @@ public class IincapacidaesRepo implements IincapacidadService {
 
     }
 
-    @Override
-    public List<TipoEnfermedad> listarEnfermedadesPorGrupos() {
-        List<TipoEnfermedad> tiposEnfermedades = new ArrayList<>();
-        try(Connection connection = Conexion.getConnection()){
-            String consulta = "call RHU.QB_APLICATION_JRHU0055.PL_GRUP_ENFERMEDAD(?,?,?)";
-            try(CallableStatement callableStatement = connection.prepareCall(consulta)){
-                callableStatement.registerOutParameter("RGPENFER",OracleTypes.CURSOR);
-                callableStatement.registerOutParameter("VCESTADO_PROCESO",OracleTypes.VARCHAR);
-                callableStatement.registerOutParameter("VCMENSAJE_PROCESO",OracleTypes.VARCHAR);
-                callableStatement.execute();
-                ResultSet resultSet = (ResultSet) callableStatement.getObject("RGPENFER");
-                if(Objects.nonNull(resultSet)){
-                    while (resultSet.next()){
-                        TipoEnfermedad tipoEnfermedad = new TipoEnfermedad();
-                        tipoEnfermedad.setCodigoTipoEnfermedad(resultSet.getString("GEN_COD"));
-                        tipoEnfermedad.setNombreTipoEnfermedad(resultSet.getString("GEN_NOMBRE"));
-                        tiposEnfermedades.add(tipoEnfermedad);
-                    }
-                }
-                callableStatement.close();
-                return tiposEnfermedades;
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public List<SubTipoEnfermedad> listarSubtipoEnfermedadesPorGrupo(Integer codigoGrupo) {
-        List<SubTipoEnfermedad> subTipoEnfermedads = new ArrayList<>();
-        try(Connection connection = Conexion.getConnection()){
-            String consulta = "call RHU.QB_APLICATION_JRHU0055.PL_SUB_GRUP_ENFERMEDAD(?,?,?,?)";
-            try(CallableStatement callableStatement = connection.prepareCall(consulta)){
-                callableStatement.setInt("NMGPENFER",codigoGrupo);
-                callableStatement.registerOutParameter("RSGPENFER",OracleTypes.CURSOR);
-                callableStatement.registerOutParameter("VCESTADO_PROCESO",OracleTypes.VARCHAR);
-                callableStatement.registerOutParameter("VCMENSAJE_PROCESO",OracleTypes.VARCHAR);
-                callableStatement.execute();
-                ResultSet resultSet = (ResultSet) callableStatement.getObject("RSGPENFER");
-                if(Objects.nonNull(resultSet)){
-                    while(resultSet.next()){
-                        SubTipoEnfermedad subTipoEnfermedad = new SubTipoEnfermedad();
-                        subTipoEnfermedad.setCodigoSubTipoEnfermedad(resultSet.getString("SEN_COD"));
-                        subTipoEnfermedad.setNombreSubTipoEnfermedad(resultSet.getString("SEN_NOMBRE"));
-                        subTipoEnfermedads.add(subTipoEnfermedad);
-                    }
-                }
-                callableStatement.close();
-                return subTipoEnfermedads;
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     @Override
     public InformacionTaxonomia obtenerInformacionTaxonomia(String deaCodigo, String nombreCarpeta) {
@@ -260,5 +213,127 @@ public class IincapacidaesRepo implements IincapacidadService {
             return new InformacionTaxonomia(InformacionTaxonomia.RespuestaGenerica.ERROR.getEstado() + exception.getLocalizedMessage());
         }
         return informacionTaxonomia;
+    }
+
+    @Override
+    public  RespuestaGenerica<Enfermedad>  listarEnfermedades() {
+        List<Enfermedad> listaDeEnfermedades = new ArrayList<>();
+        try (Connection connection = Conexion.getConnection()){
+            String consulta ="{ call RHU.QB_APLICATION_JRHU0055.PL_OBTENER_ENFERMEDAD(?,?,?)}";
+            try(CallableStatement callableStatement = connection.prepareCall(consulta)){
+                callableStatement.registerOutParameter("RSGPENFER",OracleTypes.CURSOR);
+                callableStatement.registerOutParameter("VCESTADO_PROCESO", OracleTypes.VARCHAR);
+                callableStatement.registerOutParameter("VCMENSAJE_PROCESO", OracleTypes.VARCHAR);
+                callableStatement.execute();
+                ResultSet resultSet = (ResultSet) callableStatement.getObject("RSGPENFER");
+                if (!resultSet.next()){
+                    return new RespuestaGenerica<>(TipoRespuesta.WARNING, "Error al consultar la base de datos debido a :" +
+                            callableStatement.getString("VCMENSAJE_PROCESO"),listaDeEnfermedades);
+                }
+                while (resultSet.next()){
+                    Enfermedad enfermedad = new Enfermedad();
+                    enfermedad.setCodigoEnfermedad(resultSet.getString("ENF_COD"));
+                    enfermedad.setCodigoGrupoEnfermedadl(resultSet.getString("GEN_COD"));
+                    enfermedad.setCodigoSubtipoEnfermedad(resultSet.getString("SEN_COD"));
+                    enfermedad.setNombreEnfermedad(resultSet.getString("ENF_NOMBRE"));
+                    listaDeEnfermedades.add(enfermedad);
+                }
+                callableStatement.close();
+                return new RespuestaGenerica<>(TipoRespuesta.SUCCESS,"Consulta Generada",listaDeEnfermedades);
+            }
+        } catch (SQLException e) {
+            return new RespuestaGenerica<>(TipoRespuesta.ERROR,"Error no contralado en IincapacidaesRepo:listarEnfermedades debido a :" +
+                    e);
+        }
+
+    }
+
+    @Override
+    public RespuestaGenerica<TerminosYCondiciones> obtenerTerminosYCondiciones() {
+        TerminosYCondiciones terminosYCondiciones = new TerminosYCondiciones();
+        try(Connection connection = Conexion.getConnection()){
+            String consulta = "{ call RHU.QB_APLICATION_JRHU0055.PL_OBTENER_TERMINOSYCOND(?,?,?)}";
+            try (CallableStatement callableStatement = connection.prepareCall(consulta)){
+                callableStatement.registerOutParameter("RTERMINO", OracleTypes.CURSOR);
+                callableStatement.registerOutParameter("VCESTADO_PROCESO" , OracleTypes.VARCHAR);
+                callableStatement.registerOutParameter("VCMENSAJE_PROCESO" , OracleTypes.VARCHAR);
+                callableStatement.execute();
+                ResultSet resultSet = (ResultSet) callableStatement.getObject("RTERMINO");
+                if ("S".equals(callableStatement.getString("VCESTADO_PROCESO"))){
+                    while (resultSet.next()) {
+                        terminosYCondiciones.setDescripcion(resultSet.getString("TER_TEXT_HTML"));
+                        terminosYCondiciones.setCodigo(resultSet.getString("TER_CODIGO"));
+                    }
+                    callableStatement.close();
+                    return new RespuestaGenerica<>(TipoRespuesta.SUCCESS,"OK",terminosYCondiciones);
+                }
+                return new RespuestaGenerica<>(TipoRespuesta.WARNING,"ERROR AL CONSULTAR LOS TERMINOS Y CONDICIONES ",
+                        terminosYCondiciones);
+            }
+        } catch (SQLException e) {
+            return new RespuestaGenerica<>(TipoRespuesta.ERROR,"ERROR NO CONTROLADO EN IincapacidaesRepo::obtenerTerminosYCondiciones DEBIDO A :" + e);
+        }
+    }
+
+    @Override
+    public RespuestaGenerica<Boolean> actualizarEstadoDocumento(Integer deaCodigo,Integer numeroRadico, Integer codigoDocumento) {
+        try(Connection connection = Conexion.getConnection()){
+            String consulta ="{ call RHU.QB_APLICATION_JRHU0055.PL_ACTUALIZAR_DOCUMENTO(?,?,?,?,?)}";
+            try(CallableStatement callableStatement = connection.prepareCall(consulta)){
+                callableStatement.setInt("NMDEACODIGO",deaCodigo);
+                callableStatement.setInt("NMRADICADO",numeroRadico);
+                callableStatement.setInt("NMDOCUMENTO",codigoDocumento);
+                callableStatement.registerOutParameter("VCESTADO_PROCESO" , OracleTypes.VARCHAR);
+                callableStatement.registerOutParameter("VCMENSAJE_PROCESO" , OracleTypes.VARCHAR);
+                callableStatement.execute();
+                if ("S".equals(callableStatement.getString("VCESTADO_PROCESO"))){
+                    return new RespuestaGenerica<>(TipoRespuesta.SUCCESS,"OK",Boolean.TRUE);
+                }
+                callableStatement.close();
+                return new RespuestaGenerica<>(TipoRespuesta.WARNING,"DOCUMENTO NO ACTUALIZADO",Boolean.FALSE);
+            }
+        } catch (SQLException e) {
+            return new RespuestaGenerica<>(TipoRespuesta.ERROR,"ERROR NO CONTROLADO EN IincapacidaesRepo::actualizarEstadoDocumento DEBIDO A : "+ e);
+        }
+
+    }
+
+    @Override
+    public RespuestaGenerica<Integer> crearRadicado(RadicadoDTO radicadoDTO)  {
+        try(Connection connection = Conexion.getConnection()){
+            String consulta = "{ call RHU.QB_APLICATION_JRHU0055.PL_CREAR_RADICADO(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
+            try(CallableStatement callableStatement = connection.prepareCall(consulta)){
+                callableStatement.setString("VCTDOCUMENTO",radicadoDTO.getTipoDocumentoEmpleado());
+                callableStatement.setInt("NMDOCUMENTO",radicadoDTO.getNumeroDocumentoEmpleado());
+                callableStatement.setInt("NMEMPPRINCIPAL",radicadoDTO.getNumeroDocumentoEmpresaPrincipal());
+                callableStatement.setString("VCTIPODOCEMPR",radicadoDTO.getTipoDocumentoEmpresaPrincioal());
+                callableStatement.setInt("NMCONTRATO",radicadoDTO.getContrato());
+                callableStatement.setInt("NMCODGENFE",radicadoDTO.getIdGrupoEnfermedad());
+                callableStatement.setInt("NMCODSGENFE",radicadoDTO.getIdSubGrupoEnfermedad());
+                callableStatement.setString("VCCODENFER",radicadoDTO.getIdCodigoEnfermedad());
+                callableStatement.setInt("NMCONTINCA",radicadoDTO.getIdContigenciaIncapacidad());
+                callableStatement.setString("VCFECINCIDENTE",radicadoDTO.getFechaIncidente());
+                callableStatement.setString("VCFECINICIOINCA",radicadoDTO.getFechaInicioIncapacidad());
+                callableStatement.setInt("NMDIAS",radicadoDTO.getNumeroDeDias());
+                callableStatement.setString("VCPRORROGA",radicadoDTO.getProrroga());
+                callableStatement.setInt("NMIDUSUARIO",radicadoDTO.getIdUsuarioCrea());
+                callableStatement.setInt("NMSUBCONTI",radicadoDTO.getIdSubTipoContigencia());
+                callableStatement.registerOutParameter("NMRADICADO" , OracleTypes.NUMBER);
+                callableStatement.registerOutParameter("VCESTADO_PROCESO" , OracleTypes.VARCHAR);
+                callableStatement.registerOutParameter("VCMENSAJE_PROCESO" , OracleTypes.VARCHAR);
+                callableStatement.execute();
+
+                if ("S".equals(callableStatement.getString("VCESTADO_PROCESO"))){
+                    return new RespuestaGenerica<>(TipoRespuesta.SUCCESS,"OK",
+                            callableStatement.getInt("NMRADICADO"));
+                }
+                callableStatement.close();
+                return new RespuestaGenerica<>(TipoRespuesta.WARNING,"FALLO AL CREAR EL RADICADO");
+            }
+
+        } catch (SQLException e) {
+            return new RespuestaGenerica<>(TipoRespuesta.ERROR,"ERROR NO CONTROLADO EN IincapacidaesRepo::crearRadicado DEBIDO A : "+ e);
+        }
+
     }
 }

@@ -57,7 +57,6 @@ public class ServicioRest {
             }
             return new RespuestaGenerica(TipoRespuesta.ERROR,"Error al Obtener la respuesta debido a que le servicio respondio " + body
             ,informacionTaxonomia);
-
         }catch (RuntimeException e){
             return new RespuestaGenerica(TipoRespuesta.ERROR,"Error al construir la respuesta debido a : " + e.getMessage());
         }

@@ -1,7 +1,9 @@
 package co.com.activos.jrhu0055.Services;
 
 import co.com.activos.jrhu0055.DTO.ContratoDTO;
+import co.com.activos.jrhu0055.DTO.RadicadoDTO;
 import co.com.activos.jrhu0055.model.*;
+import co.com.activos.jrhu0055.utiliti.RespuestaGenerica;
 
 import java.util.List;
 
@@ -17,12 +19,15 @@ public interface IincapacidadService {
 
     List<DocumentoPorSubtipoIncapacidad> listarDocumentos (Integer codigoSubTipoIncapacidad);
 
-
-    List<TipoEnfermedad> listarEnfermedadesPorGrupos();
-
-    List<SubTipoEnfermedad> listarSubtipoEnfermedadesPorGrupo(Integer codigoGrupo);
-
     InformacionTaxonomia obtenerInformacionTaxonomia(String deaCodigo,String nombreCarpeta);
+
+    RespuestaGenerica<Enfermedad> listarEnfermedades();
+
+    RespuestaGenerica<TerminosYCondiciones> obtenerTerminosYCondiciones();
+
+    RespuestaGenerica<Boolean> actualizarEstadoDocumento(Integer deaCodigo,Integer numeroRadico, Integer codigoDocumento);
+
+    RespuestaGenerica<Integer> crearRadicado(RadicadoDTO radicadoDTO);
 
 
 

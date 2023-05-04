@@ -11,6 +11,9 @@ public class Taxonomia implements Serializable {
     private String tipoFlujo;
     private String deaCodigoPadre;
 
+    private Integer prdCodigo;
+    private String base64;
+
     public Taxonomia(String tipo, String azCodigoCliPadre, String nombre, String usuario, String tipoFlujo, String deaCodigoPadre) {
         this.tipo = tipo;
         this.azCodigoCliPadre = azCodigoCliPadre;
@@ -18,6 +21,16 @@ public class Taxonomia implements Serializable {
         this.usuario = usuario;
         this.tipoFlujo = tipoFlujo;
         this.deaCodigoPadre = deaCodigoPadre;
+    }
+
+    public Taxonomia(String nombre , String tipo, String usuario, String tipoFlujo, String deaCodigoPadre, Integer prdCodigo, String base64) {
+        this.tipo = tipo;
+        this.usuario = usuario;
+        this.tipoFlujo = tipoFlujo;
+        this.deaCodigoPadre = deaCodigoPadre;
+        this.prdCodigo = prdCodigo;
+        this.base64 = base64;
+        this.nombre = nombre;
     }
 
     public String getTipo() {
@@ -66,5 +79,21 @@ public class Taxonomia implements Serializable {
 
     public void setDeaCodigoPadre(String deaCodigoPadre) {
         this.deaCodigoPadre = deaCodigoPadre;
+    }
+
+    public Integer getPrdCodigo() {
+        return prdCodigo;
+    }
+
+    public void setPrdCodigo(Integer prdCodigo) {
+        this.prdCodigo = prdCodigo;
+    }
+
+    public String getBase64() {
+        return base64;
+    }
+
+    public void setBase64(String base64) {
+        this.base64 = base64;
     }
 }

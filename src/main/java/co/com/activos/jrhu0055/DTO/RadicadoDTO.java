@@ -1,11 +1,12 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package co.com.activos.jrhu0055.DTO;
 
+import co.com.activos.jrhu0055.model.Documento;
 import co.com.activos.jrhu0055.utiliti.TipoAccion;
 import java.io.Serializable;
+import java.util.List;
+
+import static co.com.activos.jrhu0055.DTO.RadicadoDTO.NivelCreacion.NC;
 
 /**
  *
@@ -13,47 +14,74 @@ import java.io.Serializable;
  */
 public class RadicadoDTO implements Serializable {
 
-    private String numeroRadicado;
+    private String tipoDocumentoEmpleado;
+    private Integer numeroDocumentoEmpleado;
+    private Integer numeroDocumentoEmpresaPrincipal;
+    private String tipoDocumentoEmpresaPrincioal;
+    private Integer contrato;
+    private Integer idGrupoEnfermedad;
+    private Integer idSubGrupoEnfermedad;
+    private String idCodigoEnfermedad;
+    private Integer idContigenciaIncapacidad;
+    private Integer idSubTipoContigencia;
+    private String fechaIncidente;
+    private String fechaInicioIncapacidad;
+    private Integer numeroDeDias;
+    private String prorroga;
+    private Integer idUsuarioCrea;
+    private Integer numeroRadicado;
     private String azCodigo;
     private String deaCodigo;
-    private String contrato;
-    private String fecha;
-    private String numeroDocumentoEmpleado;
     private String tipoACargar;
     private TipoAccion tipoAccion;
+    private List<Documento> documentosACargar;
+    private NivelCreacion nivel = NC;
 
     public RadicadoDTO() {
     }
 
-    public RadicadoDTO(String numeroRadicado, String azCodigo, String deaCodigo, String numeroDocumentoEmpleado, String tipoACargar) {
+    public enum NivelCreacion{
+        // NC : NIVEL CONTRATO PRIMER NIVEL DE CREACION DE CARPETA
+        // NR : NIVEL RADICACION SEGUNDO NIVEL DE CREACION DE CARPETA
+        NC,NR
+    }
+    public RadicadoDTO(Integer numeroRadicado, String azCodigo, String deaCodigo, Integer numeroDocumentoEmpleado, String tipoACargar,NivelCreacion nivel) {
         this.numeroRadicado = numeroRadicado;
         this.azCodigo = azCodigo;
         this.deaCodigo = deaCodigo;
         this.numeroDocumentoEmpleado = numeroDocumentoEmpleado;
         this.tipoACargar = tipoACargar;
+        this.nivel =nivel;
     }
 
-    public String getNumeroRadicado() {
+    public RadicadoDTO(String deaCodigo, Integer numeroDocumentoEmpleado, String tipoACargar, List<Documento> documentosACargar) {
+        this.deaCodigo = deaCodigo;
+        this.numeroDocumentoEmpleado = numeroDocumentoEmpleado;
+        this.tipoACargar = tipoACargar;
+        this.documentosACargar = documentosACargar;
+    }
+
+    public Integer getNumeroRadicado() {
         return numeroRadicado;
     }
 
-    public void setNumeroRadicado(String numeroRadicado) {
+    public void setNumeroRadicado(Integer numeroRadicado) {
         this.numeroRadicado = numeroRadicado;
     }
 
-    public String getFecha() {
-        return fecha;
+    public String getTipoDocumentoEmpleado() {
+        return tipoDocumentoEmpleado;
     }
 
-    public void setFecha(String fecha) {
-        this.fecha = fecha;
+    public void setTipoDocumentoEmpleado(String tipoDocumentoEmpleado) {
+        this.tipoDocumentoEmpleado = tipoDocumentoEmpleado;
     }
 
-    public String getNumeroDocumentoEmpleado() {
+    public Integer getNumeroDocumentoEmpleado() {
         return numeroDocumentoEmpleado;
     }
 
-    public void setNumeroDocumentoEmpleado(String numeroDocumentoEmpleado) {
+    public void setNumeroDocumentoEmpleado(Integer numeroDocumentoEmpleado) {
         this.numeroDocumentoEmpleado = numeroDocumentoEmpleado;
     }
 
@@ -72,8 +100,6 @@ public class RadicadoDTO implements Serializable {
     public void setTipoAccion(TipoAccion tipoAccion) {
         this.tipoAccion = tipoAccion;
     }
-    
-    
 
     public String getAzCodigo() {
         return azCodigo;
@@ -91,14 +117,124 @@ public class RadicadoDTO implements Serializable {
         this.deaCodigo = deaCodigo;
     }
 
-    public String getContrato() {
+    public Integer getNumeroDocumentoEmpresaPrincipal() {
+        return numeroDocumentoEmpresaPrincipal;
+    }
+
+    public void setNumeroDocumentoEmpresaPrincipal(Integer numeroDocumentoEmpresaPrincipal) {
+        this.numeroDocumentoEmpresaPrincipal = numeroDocumentoEmpresaPrincipal;
+    }
+
+    public String getTipoDocumentoEmpresaPrincioal() {
+        return tipoDocumentoEmpresaPrincioal;
+    }
+
+    public void setTipoDocumentoEmpresaPrincioal(String tipoDocumentoEmpresaPrincioal) {
+        this.tipoDocumentoEmpresaPrincioal = tipoDocumentoEmpresaPrincioal;
+    }
+
+    public Integer getContrato() {
         return contrato;
     }
 
-    public void setContrato(String contrato) {
+    public void setContrato(Integer contrato) {
         this.contrato = contrato;
     }
-    
-    
 
+    public List<Documento> getDocumentosACargar() {
+        return documentosACargar;
+    }
+
+    public void setDocumentosACargar(List<Documento> documentosACargar) {
+        this.documentosACargar = documentosACargar;
+    }
+
+    public NivelCreacion getNivel() {
+        return nivel;
+    }
+
+    public void setNivel(NivelCreacion nivel) {
+        this.nivel = nivel;
+    }
+
+
+    public Integer getIdGrupoEnfermedad() {
+        return idGrupoEnfermedad;
+    }
+
+    public void setIdGrupoEnfermedad(Integer idGrupoEnfermedad) {
+        this.idGrupoEnfermedad = idGrupoEnfermedad;
+    }
+
+    public Integer getIdSubGrupoEnfermedad() {
+        return idSubGrupoEnfermedad;
+    }
+
+    public void setIdSubGrupoEnfermedad(Integer idSubGrupoEnfermedad) {
+        this.idSubGrupoEnfermedad = idSubGrupoEnfermedad;
+    }
+
+    public String getIdCodigoEnfermedad() {
+        return idCodigoEnfermedad;
+    }
+
+    public void setIdCodigoEnfermedad(String idCodigoEnfermedad) {
+        this.idCodigoEnfermedad = idCodigoEnfermedad;
+    }
+
+    public Integer getIdContigenciaIncapacidad() {
+        return idContigenciaIncapacidad;
+    }
+
+    public void setIdContigenciaIncapacidad(Integer idContigenciaIncapacidad) {
+        this.idContigenciaIncapacidad = idContigenciaIncapacidad;
+    }
+
+    public Integer getIdSubTipoContigencia() {
+        return idSubTipoContigencia;
+    }
+
+    public void setIdSubTipoContigencia(Integer idSubTipoContigencia) {
+        this.idSubTipoContigencia = idSubTipoContigencia;
+    }
+
+    public String getFechaIncidente() {
+        return fechaIncidente;
+    }
+
+    public void setFechaIncidente(String fechaIncidente) {
+        this.fechaIncidente = fechaIncidente;
+    }
+
+    public String getFechaInicioIncapacidad() {
+        return fechaInicioIncapacidad;
+    }
+
+    public void setFechaInicioIncapacidad(String fechaInicioIncapacidad) {
+        this.fechaInicioIncapacidad = fechaInicioIncapacidad;
+    }
+
+    public Integer getNumeroDeDias() {
+        return numeroDeDias;
+    }
+
+    public void setNumeroDeDias(Integer numeroDeDias) {
+        this.numeroDeDias = numeroDeDias;
+    }
+
+    public String getProrroga() {
+        return prorroga;
+    }
+
+    public void setProrroga(String prorroga) {
+        this.prorroga = prorroga;
+    }
+
+    public Integer getIdUsuarioCrea() {
+        return idUsuarioCrea;
+    }
+
+    public void setIdUsuarioCrea(Integer idUsuarioCrea) {
+        this.idUsuarioCrea = idUsuarioCrea;
+    }
 }

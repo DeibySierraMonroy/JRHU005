@@ -10,6 +10,10 @@ public class Contrato implements Serializable {
     private String fechaFinalizacionContrato;
 
     private String nombreEmpresaPrincipal;
+    private String tipoDocumentoEmpresaPrincipal;
+    private String numeroDocumentoEmpresaPrincipal;
+    private String getNumeroDocumentoEmpresaFilial;
+    private String tipoDocumentoEmppresaFilial;
 
     private String estadoDelContrato;
 
@@ -66,6 +70,38 @@ public class Contrato implements Serializable {
 
     public String getEstadoDelContrato() {
         return estadoDelContrato;
+    }
+
+    public String getTipoDocumentoEmpresaPrincipal() {
+        return tipoDocumentoEmpresaPrincipal;
+    }
+
+    public void setTipoDocumentoEmpresaPrincipal(String tipoDocumentoEmpresaPrincipal) {
+        this.tipoDocumentoEmpresaPrincipal = tipoDocumentoEmpresaPrincipal;
+    }
+
+    public String getTipoDocumentoEmppresaFilial() {
+        return tipoDocumentoEmppresaFilial;
+    }
+
+    public void setTipoDocumentoEmppresaFilial(String tipoDocumentoEmppresaFilial) {
+        this.tipoDocumentoEmppresaFilial = tipoDocumentoEmppresaFilial;
+    }
+
+    public String getNumeroDocumentoEmpresaPrincipal() {
+        return numeroDocumentoEmpresaPrincipal;
+    }
+
+    public void setNumeroDocumentoEmpresaPrincipal(String numeroDocumentoEmpresaPrincipal) {
+        this.numeroDocumentoEmpresaPrincipal = numeroDocumentoEmpresaPrincipal;
+    }
+
+    public String getGetNumeroDocumentoEmpresaFilial() {
+        return getNumeroDocumentoEmpresaFilial;
+    }
+
+    public void setGetNumeroDocumentoEmpresaFilial(String getNumeroDocumentoEmpresaFilial) {
+        this.getNumeroDocumentoEmpresaFilial = getNumeroDocumentoEmpresaFilial;
     }
 
     public void setEstadoDelContrato(String estadoDelContrato) {

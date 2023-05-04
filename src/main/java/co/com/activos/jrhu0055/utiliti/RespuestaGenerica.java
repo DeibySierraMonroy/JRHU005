@@ -7,6 +7,8 @@ import java.util.Map;
 public class RespuestaGenerica<T> implements Serializable{
     private TipoRespuesta status;
     private String mensaje;
+
+    private String resultadoSubidaDocumentos;
     private T objeto;
     private List<T> listaResultados;
     private Long resultLong;
@@ -27,8 +29,13 @@ public class RespuestaGenerica<T> implements Serializable{
         this.mensaje = mensaje;
         this.listValues = listValues;
     }
-    
-    
+
+    public RespuestaGenerica(TipoRespuesta status, String mensaje, String resultadoSubidaDocumentos, List<T> listaResultados) {
+        this.status = status;
+        this.mensaje = mensaje;
+        this.resultadoSubidaDocumentos = resultadoSubidaDocumentos;
+        this.listaResultados = listaResultados;
+    }
 
     public RespuestaGenerica(TipoRespuesta status, String mensaje, T objeto) {
         this.status = status;
@@ -88,5 +95,13 @@ public class RespuestaGenerica<T> implements Serializable{
 
     public void setListValues(Map<String, ?> listValues) {
         this.listValues = listValues;
+    }
+
+    public String getResultadoSubidaDocumentos() {
+        return resultadoSubidaDocumentos;
+    }
+
+    public void setResultadoSubidaDocumentos(String resultadoSubidaDocumentos) {
+        this.resultadoSubidaDocumentos = resultadoSubidaDocumentos;
     }
 }
